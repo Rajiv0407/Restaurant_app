@@ -99,15 +99,21 @@ app.delete('/delete_item/:id', async (req, res) => {
 
 app.get('/item_list', async (req, res) => {
     try {
+
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 2;
+        const skip = (page - 1) * limit;
         const db = await ConnectDb();
         const collection = await db.collection('add_item');
-        const result = await collection.find().toArray();
-        //console.log(result);
+        const result = await collection.find().skip(skip).limit(limit).toArray();
+        const totalProducts = await collection.countDocuments();
+        //console.log(totalProducts);  
         if (result) {
             res.status(200).json({
                 status:true,
                 message: 'Item Listing',
-                result: result
+                result: result,
+                totalCount:totalProducts
             })
         } else {
             res.status(200).json({
