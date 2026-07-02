@@ -1,7 +1,10 @@
 import express, { json, urlencoded } from "express";
 import ConnectDb from './dbconfig.js';
 import { ObjectId } from "mongodb";
+import cors from "cors";
 const app = express();
+
+app.use(cors());  
 
 app.use(express.urlencoded({ extended: true })); // this middleware useing for getting data from request body 
 app.use(express.json());
@@ -12,7 +15,7 @@ app.get("/", (req, res) => {
         message: 'Api connected'
     })
 })
-app.post('/add_item', async (req, res) => {
+app.post('/add_item', async (req, res) => {        
     try {
         const itemData = req.body;
         const db = await ConnectDb();
@@ -102,6 +105,7 @@ app.get('/item_list', async (req, res) => {
         //console.log(result);
         if (result) {
             res.status(200).json({
+                status:true,
                 message: 'Item Listing',
                 result: result
             })
